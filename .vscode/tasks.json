@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Database (PostgreSQL 5433)",
+      "type": "shell",
+      "command": "npm run db:start",
+      "options": {
+        "env": {
+          "PGDATA_DIR": "${env:PGDATA_DIR}"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Backend (NestJS)",
+      "type": "shell",
+      "command": "npm run start:backend",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Frontend (Vite)",
+      "type": "shell",
+      "command": "npm run start:frontend",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Start All Services (Backend + Frontend)",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}

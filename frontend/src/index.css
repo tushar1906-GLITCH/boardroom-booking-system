@@ -1,0 +1,111 @@
+@import "@fontsource/manrope/400.css";
+@import "@fontsource/manrope/500.css";
+@import "@fontsource/manrope/600.css";
+@import "@fontsource/manrope/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background-color: #0A0E16;
+  color: #F8FAFC;
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom modern scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0A0E16;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E2638;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2D3748;
+}
+
+/* FullCalendar Dark Theme Bespoke Overrides */
+.fc {
+  --fc-page-bg-color: #0F1420;
+  --fc-default-border-color: rgba(255, 255, 255, 0.08);
+  --fc-neutral-bg-color: #151B2A;
+  --fc-neutral-text-color: #94A3B8;
+  --fc-border-color: rgba(255, 255, 255, 0.08);
+  --fc-button-text-color: #F8FAFC;
+  --fc-button-bg-color: #182030;
+  --fc-button-border-color: rgba(255, 255, 255, 0.1);
+  --fc-button-hover-bg-color: #242E44;
+  --fc-button-hover-border-color: rgba(255, 255, 255, 0.2);
+  --fc-button-active-bg-color: #7C6CFF;
+  --fc-button-active-border-color: #7C6CFF;
+  --fc-event-bg-color: #7C6CFF;
+  --fc-event-border-color: #7C6CFF;
+  --fc-today-bg-color: rgba(124, 108, 255, 0.05);
+  --fc-now-indicator-color: #EF4444;
+  font-family: 'Manrope', sans-serif;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #F8FAFC;
+}
+
+.fc .fc-button {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 150ms ease;
+}
+
+.fc .fc-col-header-cell {
+  background-color: #0F1420;
+  padding: 8px 0;
+  color: #94A3B8;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+.fc-timegrid-slot-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: #64748B;
+}
+
+.fc-timegrid-slot {
+  height: 2.2rem !important;
+}
+
+.fc-event {
+  border-radius: 6px !important;
+  padding: 2px 4px !important;
+  font-size: 0.8rem !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+
+.fc-event:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
