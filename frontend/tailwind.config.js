@@ -65,6 +65,9 @@ export default {
         card: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
         glow: '0 0 25px -5px rgba(124, 108, 255, 0.25)',
       },
+      gridTemplateColumns: {
+        '13': 'repeat(13, minmax(0, 1fr))',
+      },
     },
   },
   plugins: [],

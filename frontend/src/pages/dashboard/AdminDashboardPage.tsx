@@ -58,15 +58,19 @@ export const AdminDashboardPage: React.FC = () => {
     queryFn: () => statsApi.getTopRooms(),
   });
 
-  const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-  const hoursList = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+  const weekdayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const hoursList = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
-  // Helper to color heatmap cells based on count
-  const getHeatmapColor = (count: number) => {
-    if (count === 0) return 'bg-surface-200/50 text-slate-600';
-    if (count === 1) return 'bg-primary/20 text-primary-light font-bold';
-    if (count === 2) return 'bg-primary/40 text-white font-bold';
-    return 'bg-primary text-white font-extrabold shadow-sm';
+  // Max count for scaling
+  const maxCount = Math.max(1, ...(peakHours || []).map((p) => p.count));
+
+  // Returns inline background + text color based on intensity
+  const getHeatmapStyle = (count: number): React.CSSProperties => {
+    if (count === 0) return { backgroundColor: 'rgba(255,255,255,0.04)', color: 'transparent' };
+    const intensity = count / maxCount;
+    if (intensity < 0.33) return { backgroundColor: 'rgba(124,108,255,0.25)', color: '#9384FF' };
+    if (intensity < 0.66) return { backgroundColor: 'rgba(124,108,255,0.55)', color: '#fff' };
+    return { backgroundColor: '#7C6CFF', color: '#fff', fontWeight: 700, boxShadow: '0 0 8px rgba(124,108,255,0.5)' };
   };
 
   return (
@@ -290,25 +294,24 @@ export const AdminDashboardPage: React.FC = () => {
                 <Flame className="w-4 h-4 text-amber-400" />
                 Peak Booking Demand Heatmap
               </h3>
-              <p className="text-xs text-slate-400">Meeting density across weekdays and office hours</p>
-            </div>
-            <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-400">
-              <span>Less</span>
-              <span className="w-3 h-3 rounded bg-surface-200 border border-border" />
-              <span className="w-3 h-3 rounded bg-primary/20" />
-              <span className="w-3 h-3 rounded bg-primary/40" />
-              <span className="w-3 h-3 rounded bg-primary" />
-              <span>More</span>
+              <p className="text-xs text-slate-400">Meeting density across weekdays and office hours (07:00–22:00)</p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <div className="min-w-[500px]">
-              {/* Hour Header */}
-              <div className="grid grid-cols-13 gap-1.5 mb-1.5 text-center">
-                <div className="text-[10px] font-mono text-slate-500 text-left">Day</div>
+            <div style={{ minWidth: '600px' }}>
+              {/* Hour Header Row */}
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `56px repeat(${hoursList.length}, 1fr)`,
+                  gap: '5px',
+                  marginBottom: '5px',
+                }}
+              >
+                <div />
                 {hoursList.map((h) => (
-                  <div key={h} className="text-[10px] font-mono text-slate-500">
+                  <div key={h} style={{ textAlign: 'center', fontSize: '10px', fontFamily: 'JetBrains Mono', color: '#64748B' }}>
                     {h}:00
                   </div>
                 ))}
@@ -318,18 +321,41 @@ export const AdminDashboardPage: React.FC = () => {
               {weekdayNames.map((dayName, dayIndex) => {
                 const dayNum = dayIndex + 1;
                 return (
-                  <div key={dayName} className="grid grid-cols-13 gap-1.5 mb-1.5 items-center">
-                    <span className="text-[11px] font-mono text-slate-400 font-semibold">{dayName}</span>
+                  <div
+                    key={dayName}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: `56px repeat(${hoursList.length}, 1fr)`,
+                      gap: '5px',
+                      marginBottom: '5px',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '11px', fontFamily: 'JetBrains Mono', color: '#94A3B8', fontWeight: 600 }}>
+                      {dayName}
+                    </span>
                     {hoursList.map((hour) => {
                       const item = (peakHours || []).find((p) => p.day === dayNum && p.hour === hour);
                       const count = item ? item.count : 0;
+                      const style = getHeatmapStyle(count);
                       return (
                         <div
                           key={`${dayNum}-${hour}`}
-                          className={`h-7 rounded-lg flex items-center justify-center text-[11px] font-mono transition-transform hover:scale-110 cursor-default ${getHeatmapColor(
-                            count,
-                          )}`}
-                          title={`${dayName} at ${hour}:00 - ${count} booking(s)`}
+                          title={`${dayName} ${hour}:00 — ${count} booking${count !== 1 ? 's' : ''}`}
+                          style={{
+                            height: '28px',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            fontFamily: 'JetBrains Mono',
+                            cursor: 'default',
+                            transition: 'transform 0.15s',
+                            ...style,
+                          }}
+                          onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.transform = 'scale(1.15)')}
+                          onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.transform = 'scale(1)')}
                         >
                           {count > 0 ? count : ''}
                         </div>
@@ -338,6 +364,26 @@ export const AdminDashboardPage: React.FC = () => {
                   </div>
                 );
               })}
+
+              {/* Legend */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono', color: '#64748B' }}>Less</span>
+                {[
+                  'rgba(255,255,255,0.04)',
+                  'rgba(124,108,255,0.25)',
+                  'rgba(124,108,255,0.55)',
+                  '#7C6CFF',
+                ].map((bg, i) => (
+                  <div
+                    key={i}
+                    style={{ width: '14px', height: '14px', borderRadius: '4px', backgroundColor: bg, border: i === 0 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}
+                  />
+                ))}
+                <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono', color: '#64748B' }}>More</span>
+                <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono', color: '#475569', marginLeft: 'auto' }}>
+                  Hover any cell for details
+                </span>
+              </div>
             </div>
           </div>
         </div>
